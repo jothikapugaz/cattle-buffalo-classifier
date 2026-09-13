@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.DS_Store
+
+# Local datasets and generated reports
+dataset/
+data/
+reports/generated/
+
+# Model artifacts
+models/*.pt
+models/*.pth
+models/*.keras
+models/*.h5
+*.onnx
+
+# Experiment outputs
+runs/
+wandb/
+mlruns/
