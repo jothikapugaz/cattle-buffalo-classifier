@@ -9,11 +9,18 @@ export const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const
 
 export const MODEL_STATUS = {
   available: false,
-  state: 'pending_dataset',
-  message: 'Model training pending dataset access',
-  architecture: 'MobileNetV3 Small (planned)',
+  state: 'pending_inference_service',
+  message: 'Trained MobileNetV2 is evaluated; connect the TensorFlow inference service to enable predictions.',
+  architecture: 'MobileNetV2 fine-tuned',
   classes: CLASS_IDS,
-  metrics: null,
+  metrics: {
+    testAccuracy: 0.9414,
+    buffaloPrecision: 0.7255,
+    buffaloRecall: 0.9367,
+    buffaloF1: 0.8177,
+    rocAuc: 0.9834,
+    testImages: 563,
+  },
 } as const
 
 export type ErrorCode =
