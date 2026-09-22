@@ -87,21 +87,21 @@ This file is the source of truth for project progress. Items are marked:
 
 ## 05. DATA PREPROCESSING
 
-- [TODO] Image Loading
+- [DONE] Image Loading — TensorFlow directory loader
 - [TODO] Resize Images
 - [TODO] Normalize Pixel Values
-- [TODO] Label Encoding (Cattle → 0, Buffalo → 1)
+- [DONE] Label Encoding (Cattle → 0, Buffalo → 1)
 - [TODO] Train / Validation / Test Split
-- [TODO] Dataset Pipeline
+- [DONE] Dataset Pipeline — TensorFlow datasets with 224x224 images
 
 ## 06. DATA AUGMENTATION
 
-- [TODO] Horizontal Flip
-- [TODO] Rotation
-- [TODO] Zoom
-- [TODO] Translation
+- [DONE] Horizontal Flip
+- [DONE] Rotation
+- [DONE] Zoom
+- [DONE] Translation
 - [TODO] Brightness Variation
-- [TODO] Contrast Variation
+- [DONE] Contrast Variation
 - [TODO] Augmentation Validation
 
 ## 07. EXPLORATORY DATA ANALYSIS
@@ -124,39 +124,39 @@ This file is the source of truth for project progress. Items are marked:
 - [TODO] Baseline Performance
 
 ### Transfer Learning
-- [TODO] Candidate Model 1
+- [DONE] Candidate Model 1 — MobileNetV2
 - [TODO] Candidate Model 2
 - [TODO] Candidate Model 3
 
 ### Model Selection
 - [TODO] Accuracy
-- [TODO] Validation Performance
-- [TODO] Model Size
-- [TODO] Training Time
+- [DONE] Validation Performance — best validation accuracy 94.88%; best validation loss 0.1657
+- [DONE] Model Size — 2,259,265 parameters
+- [DONE] Training Time — recorded in Colab run output
 - [TODO] Inference Time
 
-- [TODO] Final Model
+- [PARTIAL] Final Model — fine-tuned MobileNetV2 is the current candidate; final selection awaits test evaluation
 
 ## 09. MODEL TRAINING
 
 ### Training Configuration
-- [TODO] Epochs
-- [TODO] Batch Size
-- [TODO] Learning Rate
-- [TODO] Optimizer
-- [TODO] Loss Function
+- [DONE] Epochs — Stage 1: 10; Fine-Tuning: 10
+- [DONE] Batch Size — 32
+- [DONE] Learning Rate — Stage 1: 0.001; Fine-Tuning: 1e-5 with reductions
+- [DONE] Optimizer — Adam
+- [DONE] Loss Function — Binary Crossentropy
 
 ### Callbacks
-- [TODO] Early Stopping
-- [TODO] Model Checkpoint
-- [TODO] Learning Rate Scheduler
+- [DONE] Early Stopping
+- [DONE] Model Checkpoint
+- [DONE] Learning Rate Scheduler
 
-- [TODO] Training
-- [TODO] Fine-Tuning
+- [DONE] Training — MobileNetV2 Stage 1 completed
+- [DONE] Fine-Tuning — final 30 base-model layers fine-tuned
 
 ## 10. MODEL EVALUATION
 
-- [TODO] Test Dataset
+- [DONE] Test Dataset prepared (563 images; evaluation not yet run)
 - [TODO] Accuracy
 - [TODO] Precision
 - [TODO] Recall
