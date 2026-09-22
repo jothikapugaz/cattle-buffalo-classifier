@@ -1,3 +1,4 @@
+import sharp from 'sharp'
 import { ClassifierError, isPrediction, MODEL_STATUS, type Prediction } from '../../lib/classifier-contract'
 import type { ValidatedImage } from './decode-image'
 
@@ -5,9 +6,73 @@ export interface ClassifierAdapter {
   predict(image: ValidatedImage): Promise<Prediction>
 }
 
+let cachedClassifier: ClassifierAdapter | null = null
+
+class RemoteClassifierAdapter implements ClassifierAdapter {
+  constructor(private readonly baseUrl: string) {}
+
+  async predict(image: ValidatedImage): Promise<Prediction> {
+    const png = await sharp(image.pixels, {
+      raw: { width: image.width, height: image.height, channels: 3 },
+    }).png().toBuffer()
+
+    const body = new FormData()
+    body.append('file', new Blob([png], { type: 'image/png' }), 'image.png')
+
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 20_000)
+
+    try {
+      const response = await fetch(
+        new URL('/predict', this.baseUrl.replace(/\/$/, '') + '/').toString(),
+        { method: 'POST', body, signal: controller.signal, cache: 'no-store' },
+      )
+
+      let payload: unknown
+      try {
+        payload = await response.json()
+      } catch {
+        throw new ClassifierError('INFERENCE_FAILED', 'The model service returned an unreadable response.', 502)
+      }
+
+      if (!response.ok) {
+        if (response.status === 503) {
+          throw new ClassifierError('MODEL_UNAVAILABLE', MODEL_STATUS.message, 503)
+        }
+        throw new ClassifierError('INFERENCE_FAILED', 'The model service could not analyze this image.', 502)
+      }
+
+      if (!isPrediction(payload)) {
+        throw new ClassifierError('INVALID_PREDICTION', 'The model returned an invalid result.', 502)
+      }
+
+      return payload
+    } catch (cause) {
+      if (cause instanceof ClassifierError) throw cause
+      if (cause instanceof DOMException && cause.name === 'AbortError') {
+        throw new ClassifierError('INFERENCE_FAILED', 'The model service took too long to respond.', 504)
+      }
+      throw new ClassifierError('INFERENCE_FAILED', 'The model service could not be reached.', 502)
+    } finally {
+      clearTimeout(timeout)
+    }
+  }
+}
+
 export async function loadClassifier(): Promise<ClassifierAdapter | null> {
-  // Fail closed: no authorized dataset, trained artifact, or evaluated model is available.
-  return null
+  if (cachedClassifier) return cachedClassifier
+
+  const serviceUrl = process.env.MODEL_SERVICE_URL?.trim()
+  if (!serviceUrl) return null
+
+  try {
+    new URL(serviceUrl)
+  } catch {
+    throw new ClassifierError('MODEL_UNAVAILABLE', 'The model service URL is invalid.', 503)
+  }
+
+  cachedClassifier = new RemoteClassifierAdapter(serviceUrl)
+  return cachedClassifier
 }
 
 export async function classifyImage(image: ValidatedImage): Promise<Prediction> {
