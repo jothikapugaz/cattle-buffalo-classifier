@@ -106,7 +106,7 @@ export function ClassifierWorkspace() {
     <section id="classifier" aria-labelledby="upload-title" className="enter-view-late overflow-hidden rounded-2xl border bg-card shadow-[0_8px_40px_-20px_var(--foreground)]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b px-6 py-5 sm:px-7">
         <div className="flex items-center gap-2.5"><ScanLine className="size-5 text-primary" aria-hidden="true" /><h2 id="upload-title" className="font-semibold">Image classifier</h2></div>
-        <Badge variant="destructive">Model pending</Badge>
+        <Badge variant="outline">Model service required</Badge>
       </div>
       <div className="flex flex-col gap-5 p-6 sm:p-7">
         <div className="flex flex-col gap-1"><h3 className="text-xl font-medium tracking-tight">Let&apos;s take a closer look.</h3><p className="text-sm leading-relaxed text-muted-foreground">Start with a clear photo of a single animal.</p></div>
