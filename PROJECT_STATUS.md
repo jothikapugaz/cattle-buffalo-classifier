@@ -44,20 +44,23 @@
 
 ### Model
 
-The current candidate model is **MobileNetV2 with transfer learning and fine-tuning**. The final test set has not yet been used for model selection.
+The current evaluated model is **MobileNetV2 with transfer learning and fine-tuning**. It was evaluated on the untouched 563-image test set before application integration.
 
-### Next immediate task
+Official test results:
+- Accuracy: 94.14%
+- Buffalo precision: 72.55%
+- Buffalo recall: 93.67%
+- Buffalo F1: 81.77%
+- ROC-AUC: 0.9834
+- Confusion matrix: [[456, 28], [5, 74]]
 
-Run the final evaluation on the untouched 563-image test set and record:
-- Accuracy
-- Precision
-- Recall
-- F1 score
-- ROC-AUC
-- Confusion matrix
-- Classification report
+### Inference integration
 
-After evaluation, perform error analysis before integrating the model into the web application.
+- A Python FastAPI + TensorFlow service was added under `cattle-and-buffalo-classifier/ml-service/`.
+- The service loads the trained `.keras` artifact from `MODEL_PATH` and exposes `/health` and `/predict`.
+- The Next.js `ClassifierAdapter` now calls the service through `MODEL_SERVICE_URL`.
+- The Keras artifact is intentionally not committed to GitHub.
+- Local end-to-end verification still needs to be run with the real model file and service running.
 
 ## Important dataset note
 
@@ -65,7 +68,7 @@ The Roboflow README reports 5,654 images for the original export. The current Go
 
 ## Important rule
 
-No test performance, F1, ROC-AUC, inference time, or other final performance value will be invented. Those values will be generated only from the actual test experiment.
+No performance values are invented. Final test metrics above come from the actual 563-image evaluation; application inference parity and latency still require direct runtime testing.
 
 ## Interpretability / Grad-CAM
 
