@@ -135,7 +135,7 @@ This file is the source of truth for project progress. Items are marked:
 - [DONE] Training Time — recorded in Colab run output
 - [TODO] Inference Time
 
-- [PARTIAL] Final Model — fine-tuned MobileNetV2 is the current candidate; final selection awaits test evaluation
+- [PARTIAL] Final Model — fine-tuned MobileNetV2 completed test evaluation; final selection still requires error analysis and application-level validation
 
 ## 09. MODEL TRAINING
 
@@ -156,14 +156,14 @@ This file is the source of truth for project progress. Items are marked:
 
 ## 10. MODEL EVALUATION
 
-- [DONE] Test Dataset prepared (563 images; evaluation not yet run)
-- [TODO] Accuracy
-- [TODO] Precision
-- [TODO] Recall
-- [TODO] F1 Score
-- [TODO] ROC-AUC
-- [TODO] Confusion Matrix
-- [TODO] Classification Report
+- [DONE] Test Dataset prepared (563 images)
+- [DONE] Accuracy — 94.14%
+- [DONE] Precision — 72.55% (buffalo class)
+- [DONE] Recall — 93.67% (buffalo class)
+- [DONE] F1 Score — 81.77% (buffalo class)
+- [DONE] ROC-AUC — 0.9834
+- [DONE] Confusion Matrix — [[456, 28], [5, 74]]
+- [DONE] Classification Report — generated for cattle and buffalo
 - [TODO] Error Analysis
 
 ## 11. ERROR ANALYSIS
