@@ -138,7 +138,7 @@ export function ClassifierWorkspace() {
         <div aria-live="polite" aria-atomic="true" className="flex flex-col gap-3">
           {error && <Alert variant="destructive"><Info /><AlertTitle>{modelPending ? 'Your image is ready. The model isn’t yet.' : 'Let’s try that again'}</AlertTitle><AlertDescription>{error}{modelPending && '. Your image was validated, but no prediction was generated.'}</AlertDescription></Alert>}
           {prediction && <PredictionResult prediction={prediction} />}
-          {!error && !prediction && <div className="flex items-start gap-2.5 text-sm leading-relaxed text-muted-foreground"><CircleHelp className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden="true" /><p>Try the upload experience. Predictions will be available once model training is complete.</p></div>}
+          {!error && !prediction && <div className="flex items-start gap-2.5 text-sm leading-relaxed text-muted-foreground"><CircleHelp className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden="true" /><p>Try the upload experience. Predictions will be available once the TensorFlow inference service is running.</p></div>}
         </div>
         <p className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground"><LockKeyhole className="size-3.5" aria-hidden="true" /> Images are processed in memory, never saved.</p>
       </div>
