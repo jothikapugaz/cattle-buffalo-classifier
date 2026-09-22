@@ -180,15 +180,17 @@ This file is the source of truth for project progress. Items are marked:
 - [DONE] Mislabelled Data Investigation — 3 possible label issues flagged for manual verification
 - [DONE] Out-of-domain / non-natural test images identified — 11 images flagged; overlap with possible mislabels handled without double-counting
 - [DONE] Diagnostic subset evaluation — excluding 13 unique flagged images produced 96.36% accuracy, 80.43% buffalo precision, 97.37% buffalo recall, 88.10% buffalo F1; retained as diagnostic only, not the official benchmark
-- [DONE] Error-analysis conclusion — dataset/domain issues materially contribute to observed errors; dark-coat appearance shortcut is a hypothesis to investigate with Grad-CAM and further testing
+- [DONE] Error-analysis conclusion — dataset/domain issues materially contribute to observed errors; no single visual shortcut was established
 
 ## 12. MODEL INTERPRETABILITY
 
-- [TODO] Why Did the Model Predict Cattle?
-- [TODO] Why Did the Model Predict Buffalo?
-- [TODO] Grad-CAM / Attention Visualization
-- [TODO] Important Visual Regions
-- [TODO] Background Bias Detection
+- [DONE] Why Did the Model Predict Cattle? — representative correct cattle baseline reviewed with Grad-CAM
+- [DONE] Why Did the Model Predict Buffalo? — representative correct buffalo baseline and predicted-buffalo errors reviewed
+- [DONE] Grad-CAM / Attention Visualization — corrected buffalo-target Grad-CAM completed for Errors #30, #28, and #6
+- [DONE] Important Visual Regions — body, limb, head/neck, ground/terrain and surrounding context were compared across correct and incorrect cases
+- [DONE] Background Bias Detection — contextual activation observed in several cases, but no causal background shortcut established
+- [DONE] Interpretability conclusion — three representative cattle→buffalo errors and two clean baselines indicate multiple failure modes; broad anatomical/contextual cues can contribute to both correct and incorrect predictions. Grad-CAM is treated as spatial evidence, not causal proof.
+
 
 ## 13. MODEL TESTING
 
@@ -333,7 +335,7 @@ We will work strictly in dependency order and test each stage before moving forw
 8. Transfer-learning candidates
 9. Training + fine-tuning
 10. Evaluation
-11. Error analysis + interpretability (error analysis complete; Grad-CAM next)
+11. Error analysis + interpretability (error analysis and Grad-CAM complete)
 12. Inference system
 13. Backend API
 14. Web application
