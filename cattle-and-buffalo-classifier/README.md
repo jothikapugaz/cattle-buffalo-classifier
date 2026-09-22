@@ -2,11 +2,11 @@
 
 A responsive, accessible image-classification workspace built with Next.js, TypeScript, React, Tailwind CSS, and shadcn/ui.
 
-## Current status: State B
+## Current status: State C
 
-**Model training pending dataset access.**
+**Evaluated MobileNetV2 integrated behind a Python TensorFlow inference service.**
 
-The frontend, image-validation pipeline, prediction API boundary, status API, and automated tests are implemented. There is **no trained classifier**, no loaded checkpoint, and no evaluation metrics. A valid upload returns a structured HTTP 503 rather than a fabricated prediction. This is a working application shell, not a working animal-recognition model.
+The frontend, image-validation pipeline, prediction API, model adapter, and TensorFlow service are implemented. The trained `.keras` artifact is intentionally kept outside GitHub. Local prediction requires the model file plus the Python inference service described in `ml-service/README.md`.
 
 ## Features
 
@@ -28,7 +28,7 @@ pnpm install
 pnpm dev
 ```
 
-Open http://localhost:3000. No keys, credentials, model downloads, or environment variables are needed for the pending-model application.
+Open http://localhost:3000. The Next.js application requires `MODEL_SERVICE_URL` when predictions are enabled. The TensorFlow service requires `MODEL_PATH` pointing to the trained model artifact.
 
 ```bash
 pnpm test
@@ -46,8 +46,9 @@ React upload workspace
   → POST /api/predict
   → bounded multipart parser
   → Sharp decode + validation
-  → loadClassifier() / ClassifierAdapter
-  → structured prediction OR explicit error
+  → ClassifierAdapter
+  → private Python TensorFlow inference service
+  → MobileNetV2 prediction OR explicit error
 ```
 
 | Location | Responsibility |
@@ -61,9 +62,10 @@ React upload workspace
 | `lib/classifier-contract.ts` | Mapping, validation, schema guard, model status |
 | `lib/read-upload.ts` | Request-size and multipart enforcement |
 | `ml/inference/decode-image.ts` | Full RGB decode with Sharp |
-| `ml/inference/classifier.ts` | Typed adapter and fail-closed loader |
+| `ml/inference/classifier.ts` | Typed adapter to the Python TensorFlow service |
 | `tests/` | Request, decoder, contract, and UI tests |
-| `docs/` | Dataset gate, future pipeline, integration contract |
+| `ml-service/` | FastAPI/TensorFlow inference service for the `.keras` model |
+| `docs/` | Dataset, evaluation, and model integration documentation |
 | `public/images/` | Generated editorial artwork, never ML data |
 
 ## Dataset and licensing
@@ -88,13 +90,15 @@ The two website portraits were generated as illustrative artwork. They are not R
 
 ## Model architecture and training
 
-MobileNetV3 Small transfer learning is the planned baseline, subject to confirming a suitable training runtime and inspecting the real dataset. ONNX is the planned deployment format. Neither the training framework nor ONNX runtime is installed, and no artifact-loading code is claimed to work.
+The trained model is a fine-tuned MobileNetV2 with 224 × 224 RGB input and explicit mapping `cattle → 0`, `buffalo → 1`. Stage 1 used a frozen ImageNet base followed by fine-tuning of the final 30 base-model layers with BatchNormalization kept frozen. The best fine-tuned checkpoint was saved as `cattle_buffalo_mobilenetv2_finetuned.keras`.
 
-After access is granted: implement a reproducible training pipeline with explicit class IDs, fixed seeds, checkpointing, validation monitoring, best-checkpoint selection and early stopping. The current `ClassifierAdapter` decouples that future implementation from the UI and API; `loadClassifier()` intentionally returns `null` now. Simply dropping an ONNX file into the project is not sufficient. See `docs/model_integration.md`.
+The artifact is not committed to GitHub. The deployment path uses a separate Python TensorFlow service, while the Next.js application remains the public API/UI layer. See `ml-service/README.md` and `docs/model_integration.md`.
 
 ## Evaluation and error analysis
 
-Not performed: accuracy, precision, recall, F1, confusion matrix, per-class performance, training curves, and error analysis. There is no untouched test set yet. None of the UI percentages or model-quality charts are populated.
+The official held-out test benchmark contains 563 images. Accuracy is 94.14%, buffalo precision is 72.55%, buffalo recall is 93.67%, buffalo F1 is 81.77%, and ROC-AUC is 0.9834. The confusion matrix is `[[456, 28], [5, 74]]` with cattle = 0 and buffalo = 1.
+
+Error analysis found 33 mistakes, with 28 cattle→buffalo and 5 buffalo→cattle. Several problematic test images showed severe crops, overlays, non-natural graphics, or possible label issues. Grad-CAM analysis of representative errors and clean baselines found broad anatomical/contextual attention rather than a single established visual shortcut. The official benchmark remains 94.14%; a post-hoc diagnostic subset was not treated as a replacement benchmark.
 
 After training, evaluate once on a held-out group-disjoint test set; report all requested metrics and inspect errors involving lighting, viewpoint, partial visibility, multiple animals, resolution, background, and visually similar breeds. Do not tune on test examples.
 
@@ -104,20 +108,18 @@ After training, evaluate once on a held-out group-disjoint test set; report all 
 
 `POST /api/predict` accepts exactly one multipart file field named `image`.
 
-Current valid-file response (HTTP 503):
+When the model service is not configured, valid uploads return HTTP 503. When it is configured and healthy, the success response is:
 
 ```json
 {
-  "error": {
-    "code": "MODEL_UNAVAILABLE",
-    "message": "Model training pending dataset access"
-  }
+  "class": "cattle",
+  "confidence": 0.9999
 }
 ```
 
 All application errors follow `{ "error": { "code": "...", "message": "..." } }`. Invalid requests/images return 400, unsupported formats 415, oversized payloads 413, unavailable model 503, and unexpected failures 500. Responses use `Cache-Control: no-store`. Host-level rejection can occur before the route executes; the UI catches non-JSON/network failures as well.
 
-Future success contract: `class` is `cattle` or `buffalo`; `confidence` is a finite number from 0 through 1. Both server and client validate the shape. No success response is currently generated.
+The success contract: `class` is `cattle` or `buffalo`; `confidence` is a finite number from 0 through 1. Both server and client validate the shape. No success response is currently generated.
 
 ## Testing
 
@@ -133,9 +135,8 @@ The application sends `nosniff`, strict referrer policy, HSTS, and disabled came
 
 ## Limitations and future improvements
 
-- No animal/non-animal recognition, breed identification, trained model, confidence calibration, or evaluation yet.
-- A binary model cannot reliably reject unrelated images, even with a high confidence score. A separate evaluated rejection strategy is required.
-- Establish authorized dataset access, confirm licensing, inspect labels, and train/evaluate before enabling predictions.
-- Add an evaluated ONNX adapter with matching preprocessing, checksummed artifact and provenance manifest, and verified mapping.
-- Add real cattle/buffalo integration fixtures and end-to-end model tests after obtaining rights and a held-out set.
+- No animal/non-animal rejection model is implemented; a high binary confidence score is not proof that an image contains an animal.
+- Production deployment still requires a secure model artifact location and a reachable Python inference service.
+- Verify exact TensorFlow/Keras version compatibility and numerical parity between the service and the verified Colab inference function.
+- Add genuine end-to-end integration fixtures and latency/resource benchmarks.
 - Add calibrated uncertainty and out-of-distribution evaluation before making stronger reliability claims.
