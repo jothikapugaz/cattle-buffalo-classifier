@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 const steps = [
   { number: '01', icon: ImagePlus, title: 'Upload', description: 'Choose a well-lit photo with one animal clearly in the frame.' },
   { number: '02', icon: ScanLine, title: 'Analyze', description: 'The inference service runs the evaluated MobileNetV2 model on the uploaded image.' },
-  { number: '03', icon: Focus, title: 'Predict', description: 'Once trained, get a class and confidence score—not a guarantee.' },
+  { number: '03', icon: Focus, title: 'Predict', description: 'Get a class and confidence score—not a guarantee.' },
 ]
 
 export function ProjectDetails() {
