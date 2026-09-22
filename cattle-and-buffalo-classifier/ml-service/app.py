@@ -52,7 +52,7 @@ async def predict(file: UploadFile = File(...)):
     try:
         with Image.open(io.BytesIO(data)) as image:
             image = image.convert("RGB")
-            image = image.resize(IMAGE_SIZE, Image.Resampling.LANCZOS)
+            image = image.resize(IMAGE_SIZE, Image.Resampling.NEAREST)
             array = np.asarray(image, dtype=np.float32)
     except (UnidentifiedImageError, OSError, ValueError) as exc:
         raise HTTPException(status_code=400, detail="Invalid image.") from exc
