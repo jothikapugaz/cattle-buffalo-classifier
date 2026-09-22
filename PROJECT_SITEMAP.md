@@ -17,7 +17,8 @@ This file is the source of truth for project progress. Items are marked:
 - Image integrity audit: 0 corrupt/unreadable images found.
 - Image channel/format audit performed.
 - The GitHub repository is now the project workspace; code and documentation will be added incrementally.
-- No trained model or application code has been committed yet.
+- Fine-tuned MobileNetV2 has been trained and evaluated; the `.keras` artifact remains outside GitHub.
+- Next.js application code is connected to a separate Python TensorFlow inference service.
 
 > Important: numerical values not yet verified from the final dataset are intentionally left as TODO rather than guessed.
 
@@ -135,7 +136,7 @@ This file is the source of truth for project progress. Items are marked:
 - [DONE] Training Time — recorded in Colab run output
 - [TODO] Inference Time
 
-- [PARTIAL] Final Model — fine-tuned MobileNetV2 completed test evaluation; final selection still requires error analysis and application-level validation
+- [PARTIAL] Final Model — fine-tuned MobileNetV2 completed training, test evaluation, error analysis, and Grad-CAM; application-level validation remains
 
 ## 09. MODEL TRAINING
 
@@ -206,13 +207,13 @@ This file is the source of truth for project progress. Items are marked:
 
 ## 14. INFERENCE SYSTEM
 
-- [TODO] Load Trained Model
-- [TODO] Input Image
-- [TODO] Preprocessing
-- [TODO] Prediction
-- [TODO] Confidence Score
-- [TODO] Decision Threshold
-- [TODO] Result: Cattle / Buffalo
+- [DONE] Load Trained Model — Python TensorFlow service loads the `.keras` artifact once
+- [DONE] Input Image — validated upload reaches the inference service
+- [DONE] Preprocessing — RGB decode and 224×224 resize in the inference service
+- [DONE] Prediction — explicit cattle=0 / buffalo=1 sigmoid interpretation
+- [DONE] Confidence Score — class probability selected as confidence
+- [TODO] Decision Threshold — formal threshold/rejection policy still requires evaluation
+- [DONE] Result: Cattle / Buffalo
 
 ## 15. WEB APPLICATION
 
@@ -250,15 +251,16 @@ This file is the source of truth for project progress. Items are marked:
 ## 16. BACKEND
 
 ### API
-- [TODO] `/predict`
-- [TODO] `/health`
-- [TODO] `/model-info`
+- [DONE] `/predict` — Next.js route connected to the Python TensorFlow service
+- [DONE] `/health` — Python inference-service health endpoint
+- [DONE] `/model-info` — Next.js `/api/model` status endpoint
 
-- [TODO] Image Validation
-- [TODO] Image Preprocessing
-- [TODO] Model Inference
-- [TODO] Confidence Calculation
-- [TODO] Error Handling
+- [DONE] Image Validation
+- [DONE] Image Preprocessing
+- [DONE] Model Inference — remote Python adapter
+- [DONE] Confidence Calculation
+- [DONE] Error Handling
+- [PARTIAL] Production service authentication / health-aware readiness — required before deployment
 
 ## 17. DEPLOYMENT
 
@@ -336,8 +338,8 @@ We will work strictly in dependency order and test each stage before moving forw
 9. Training + fine-tuning
 10. Evaluation
 11. Error analysis + interpretability (error analysis and Grad-CAM complete)
-12. Inference system
-13. Backend API
+12. Inference system + Python model service
+13. Backend API integration
 14. Web application
 15. Integration testing
 16. Deployment
