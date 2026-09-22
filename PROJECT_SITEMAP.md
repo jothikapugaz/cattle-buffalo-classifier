@@ -164,20 +164,23 @@ This file is the source of truth for project progress. Items are marked:
 - [DONE] ROC-AUC — 0.9834
 - [DONE] Confusion Matrix — [[456, 28], [5, 74]]
 - [DONE] Classification Report — generated for cattle and buffalo
-- [TODO] Error Analysis
+- [DONE] Error Analysis — completed on the untouched 563-image test set; 33 errors categorized and visually reviewed
 
 ## 11. ERROR ANALYSIS
 
-- [TODO] Correct Predictions
-- [TODO] Incorrect Predictions
-- [TODO] Cattle → Buffalo Errors
-- [TODO] Buffalo → Cattle Errors
-- [TODO] Low-Confidence Predictions
-- [TODO] Difficult Angles
-- [TODO] Difficult Lighting
-- [TODO] Background Problems
-- [TODO] Occlusion
-- [TODO] Mislabelled Data Investigation
+- [DONE] Correct Predictions — 530/563 test images correctly classified
+- [DONE] Incorrect Predictions — 33/563 errors
+- [DONE] Cattle → Buffalo Errors — 28
+- [DONE] Buffalo → Cattle Errors — 5
+- [DONE] Low-Confidence Predictions — reviewed across all 33 errors
+- [DONE] Difficult Angles — reviewed
+- [DONE] Difficult Lighting — reviewed
+- [DONE] Background Problems — reviewed
+- [DONE] Occlusion — reviewed
+- [DONE] Mislabelled Data Investigation — 3 possible label issues flagged for manual verification
+- [DONE] Out-of-domain / non-natural test images identified — 11 images flagged; overlap with possible mislabels handled without double-counting
+- [DONE] Diagnostic subset evaluation — excluding 13 unique flagged images produced 96.36% accuracy, 80.43% buffalo precision, 97.37% buffalo recall, 88.10% buffalo F1; retained as diagnostic only, not the official benchmark
+- [DONE] Error-analysis conclusion — dataset/domain issues materially contribute to observed errors; dark-coat appearance shortcut is a hypothesis to investigate with Grad-CAM and further testing
 
 ## 12. MODEL INTERPRETABILITY
 
@@ -330,7 +333,7 @@ We will work strictly in dependency order and test each stage before moving forw
 8. Transfer-learning candidates
 9. Training + fine-tuning
 10. Evaluation
-11. Error analysis + interpretability
+11. Error analysis + interpretability (error analysis complete; Grad-CAM next)
 12. Inference system
 13. Backend API
 14. Web application
