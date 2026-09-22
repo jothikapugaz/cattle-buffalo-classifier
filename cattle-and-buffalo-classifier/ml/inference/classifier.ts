@@ -12,12 +12,23 @@ class RemoteClassifierAdapter implements ClassifierAdapter {
   constructor(private readonly baseUrl: string) {}
 
   async predict(image: ValidatedImage): Promise<Prediction> {
-    const png = await sharp(image.pixels, {
+    // Keep the upload safely below the inference service's compressed-file limit.
+    // The model itself receives 224x224 RGB pixels, so retaining a very large
+    // browser upload provides no useful inference benefit.
+    const upload = await sharp(image.pixels, {
       raw: { width: image.width, height: image.height, channels: 3 },
-    }).png().toBuffer()
+    })
+      .resize({
+        width: 1280,
+        height: 1280,
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+      .jpeg({ quality: 82, mozjpeg: true })
+      .toBuffer()
 
     const body = new FormData()
-    body.append('file', new Blob([png], { type: 'image/png' }), 'image.png')
+    body.append('file', new Blob([upload], { type: 'image/jpeg' }), 'image.jpg')
 
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 20_000)
